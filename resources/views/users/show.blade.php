@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.app2')
 @section('content')
 
     <div class="row">
@@ -32,8 +32,23 @@
             </div>
         </div>
         <div class="pull-right">
+            <strong>Title Of your posts:</strong>
+            @foreach($posts as $post)
+            <tr>
+                <div class="col-xs-12 col-sm-12 col-md-12">
+                    <div class="form-group">
+                      
+                        {{$post['title']}}
+                    </div>
+                </div>
+              
+           
+             <br>
+              
+                @endforeach
+    
             <a class="btn btn-primary" href="{{ route('users.index') }}"> Back</a>
         </div>
-
+       
     </div>
 @endsection

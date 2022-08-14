@@ -12,6 +12,8 @@ class Post extends Model
         'title',
         'body',
         'enabled',
+        'user_id',
+        'image'
     ];
 
     /**
@@ -28,5 +30,8 @@ class Post extends Model
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+    public function user(){
+ return $this->belongsTo('App\Models\User');
+ }
 
 }

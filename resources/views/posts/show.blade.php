@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.app2')
 @section('content')
 
     <div class="row">
@@ -29,6 +29,17 @@
             <div class="form-group">
                 <strong>body:</strong>
                 {{ $posts['body'] }}
+            </div>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-12">
+            <div class="form-group">
+                <strong>Post Image:</strong>
+                @if($posts['image'])
+                <img src="{{Storage::disk('public')->url('/images//'.$posts['image'])}}" alt="{{$posts['title']}}" class="img-thumbnail" width="200" height="200">
+            
+             @else
+                <p>No image</p>
+            @endif
             </div>
         </div>
         <div class="pull-right">

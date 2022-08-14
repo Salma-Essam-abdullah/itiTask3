@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -15,36 +16,16 @@ class UserController extends Controller
      */
     public function index()
     {
-        // $users = json_decode(\Illuminate\Support\Facades\File::get(storage_path('users.json')),true);
-
-        // return view('users.index')->with(['users' => $users]);
-
-        // User::create([
-        //     'name' => 'ssss',
-        //     'email' => 'saz@gmail.com',
-        //     'password' => '123456',
-        // ]);
-        // dd(User::all());
-        // $data = [
-        //     ['name'=>'sssss', 'email'=>' ssss@mail.com','password' =>'122334'],
-        //     ['name'=>'kkk', 'email'=>' kkk@mail.com','password'=>'334f4'],
-            
-        // ];
-        // $users=User::all();
-        // return view('users.index', [
-        //     'users' => DB::table('users')->paginate(15)
-        // ])->with(['users' => $users]);
+       
         
-        // // app > http > controllers > EmployeeController.php
+    //   $users = User::paginate(8);
+    //   return view('users.index', compact('users'));
 
-   
-      $users = User::paginate(8);
+      $users = User::withCount('posts')->paginate(8);
+    
       return view('users.index', compact('users'));
         }
 
-        // User::insert($data); // Eloquent approach
-        // DB::table('users')->insert($data);
-    
 
     /**
      * Show the form for creating a new resource.
@@ -64,15 +45,10 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $request->all();
-        $user = new User([
-            'name' => $request->get('name'),
-            'email'=> $request->get('email'),
-            'password'=> $request->get('password'),
-        ]);
- 
-        $user->save();
-        return redirect('users')->with('success', 'user has been added');
+        $input = $request->all();
+        User::create($input);
+        
+        return redirect('users');
     }
 
     /**
@@ -85,8 +61,9 @@ class UserController extends Controller
     {
         
         $user = User::find($id);
-
-      return view ('users.show')->with(['users' => $user, 'id' => $id]);
+        
+        $posts = User::find($id)->posts;
+      return view ('users.show')->with(['users' => $user, 'id' => $id, 'posts' => $posts]);
     }
 
     /**
@@ -99,7 +76,7 @@ class UserController extends Controller
     {
        $users = User::find($id); 
 
-      return view ('users.edit')->with(['users' => $users, 'id' => $id]);
+      return view ('users.edit')->with(['users' => $users]);
         
     }
 

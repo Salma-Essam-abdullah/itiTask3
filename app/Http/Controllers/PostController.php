@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreUser;
 use App\Models\Post;
+use App\Models\User;
+use Illuminate\Contracts\Cache\Store;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
@@ -14,9 +18,22 @@ class PostController extends Controller
      */
     public function index()
     {
-       
-      $posts = Post::paginate(8);
-      return view('posts.index')->with('posts',Post::paginate(8));
+    //    $user = User::find(2);
+    //     $user->posts()->saveMany([
+    //         new Post(['title'=>'title_1', 'body'=>'data_1','enabled'=>true]),
+    //         new Post(['title'=>'title_2', 'body'=>'data_2','enabled'=>true]),
+    //         new Post(['title'=>'title_2', 'body'=>'data_2','enabled'=>true]),
+    //     ]);
+    // $user = User::find('users');
+
+   
+    $posts = POST::paginate(8);
+    return view('posts.index')->with(['posts'=>$posts]);
+    
+    // $posts = Post::paginate(10);
+    // return view('posts.index')->with(['posts' => $posts]);
+
+
         }
 
 
@@ -36,19 +53,20 @@ class PostController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreUser $request)
     {
-        $request->all();
-        $post = new Post([
-            'title' => $request->get('title'),
-            'body'=> $request->get('body'),
-            'enabled'=> $request->get('enabled'),
-            
-          
-        ]);
- 
-        $post->save();
+        $input =  $request->all();
+        if($request->file('image')->isValid()){
+            $path = $request->file('image')->store('public/images');
+            $input['image'] = basename($path);
+        }
+
+        $user = Auth::user();
+        $user->posts()->create($input);
         return redirect('posts')->with('success', 'post has been added');
+
+
+
     }
 
     /**
@@ -62,7 +80,7 @@ class PostController extends Controller
         
         $post = Post::find($id);
 
-      return view ('posts.show')->with(['posts' => $post, 'id' => $id]);
+      return view ('posts.show')->with(['posts' => $post]);
     }
 
     /**
@@ -73,10 +91,15 @@ class PostController extends Controller
      */
     public function edit($id)
     {
+     
+      
        $posts = Post::find($id); 
 
-      return view ('posts.edit')->with(['posts' => $posts, 'id' => $id]);
-        
+      //  $user= Auth::user();
+      // if ($user->id === $posts->user_id) {
+        return view ('posts.edit')->with(['posts' => $posts]);
+    
+    
     }
 
     /**
@@ -86,18 +109,17 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(StoreUser $request, $id)
     { 
-        $request->all();
-        $post = Post::find($id);
-        $post->title = $request->get('title');
-        $post->body = $request->get('body');
-        $post->enabled = $request->get('enabled');
- 
-        $post->update();
- 
+    
+    $posts = Post::find($id); 
+  
+      
+        $data = $request->only(['title', 'body','enabled']);
+   $posts->update($data);
         return redirect('posts')->with('success', 'Student updated successfully');
-       
+    
+   
     }
 
     /**

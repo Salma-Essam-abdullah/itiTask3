@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.app2')
 @section('title', 'Page Title')
 
 @section('content')
@@ -9,6 +9,7 @@
         <th scope="col">Name</th>
         <th scope="col">Email</th>
         <th scope="col">Actions</th>
+        <th scope="col">count</th>
       </tr>
     </thead>
     <tbody>
@@ -25,7 +26,12 @@
             @csrf
             @method('DELETE')
             <button type="submit" class="btn btn-danger">Delete</button>
-            </form></td>
+
+            </form>
+
+           
+          </td>
+          <td> <h2>{{$user['posts_count']}}</h2></td>
       </tr>
       
      @endforeach

@@ -1,9 +1,8 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PostController;
-use Illuminate\Support\Facades\Route;
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -18,6 +17,16 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 })->name('home');
+
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth'])->name('dashboard');
+
+require __DIR__.'/auth.php';
+
+
+
+
 
 
 Route::get('users', [UserController::class , 'index'])->name('users.index');
@@ -40,14 +49,13 @@ Route::get('child', function () {
 
 
 Route::get('posts', [PostController::class , 'index'])->name('posts.index');
-Route::get('posts/create',  [PostController::class , 'create'])->name('posts.create');
-Route::post('posts',  [PostController::class , 'store'])->name('posts.store');  
+Route::get('posts/create',  [PostController::class , 'create'])->name('posts.create')->middleware('auth');
+Route::post('posts',  [PostController::class , 'store'])->name('posts.store')->middleware('auth'); 
 Route::get('posts/{id}',  [PostController::class , 'show'])->where('id', '[0-9]+')->name('posts.show');
-Route::get('posts/{id}/edit',  [PostController::class , 'edit'])->name('posts.edit');
-Route::put('posts/{id}',  [PostController::class , 'update'])->name('posts.update');
+Route::get('posts/{id}/edit',  [PostController::class , 'edit'])->name('posts.edit')->middleware('auth');
+Route::put('posts/{id}',  [PostController::class , 'update'])->name('posts.update')->middleware('auth');
 Route::delete('posts/{id}',  [PostController::class , 'destroy'])->name('posts.destroy');
 
 Route::get('/post/trashed', [PostController::class , 'trashed'])->name('post.trashed');
  
     Route::get('/post/restore/{id}',  [PostController::class , 'restore'])->name('post.restore');
-
